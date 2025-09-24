@@ -22,16 +22,14 @@ int main(void)
         n->number = i;
         n->next = list;
         list = n;
-        free(n);
+        // free(n);
     }
     
-    node *n = malloc(sizeof(node));
-    n = list;
+    node *n = list;
 
     while (n != NULL)
     {
         printf("%i\n", n->number);
         n = n->next;
     }
-    free(n);
 }
