@@ -19,10 +19,9 @@ int main(void)
             return 1;
         }
 
-        n->number = i;
+        n->number = i + 1;
         n->next = list;
         list = n;
-        // free(n);
     }
     
     node *n = list;
@@ -31,5 +30,22 @@ int main(void)
     {
         printf("%i\n", n->number);
         n = n->next;
+    }
+
+    n = list;
+    n = NULL;
+    while(n != NULL)
+    {
+
+
+    }
+
+
+    node *tmp = NULL;
+    while (list != NULL)
+    {
+        tmp = list->next;
+        free(list);
+        list = tmp;
     }
 }
