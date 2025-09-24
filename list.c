@@ -32,15 +32,6 @@ int main(void)
         n = n->next;
     }
 
-    n = list;
-    n = NULL;
-    while(n != NULL)
-    {
-
-
-    }
-
-
     node *tmp = NULL;
     while (list != NULL)
     {
