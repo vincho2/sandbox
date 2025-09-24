@@ -26,9 +26,12 @@ int main(void)
     }
     
     node *n = malloc(sizeof(node));
-    while (node n != NULL)
+    n = list;
+
+    while (n != NULL)
     {
-    
+        printf("%i\n", n->number);
+        n = n->next;
     }
     free(n);
 }
