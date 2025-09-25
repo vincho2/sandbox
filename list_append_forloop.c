@@ -19,7 +19,6 @@ int main(void)
     {
         return 1;
     }
-    list->next = NULL;
 
     node *n = list;
     node *pn = NULL;
@@ -35,7 +34,7 @@ int main(void)
         }
         n->number = i + 1;
         n->next = nx;
-        // nx->next = NULL;
+        // nx->next = NULL; 
         n = nx;      
     }
     pn->next = NULL;
