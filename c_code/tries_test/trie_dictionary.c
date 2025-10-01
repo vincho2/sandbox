@@ -29,6 +29,7 @@ int main() {
 
     // Insert input_keys and values in the tree
     insert(root, "Bonjour", "Hello");
+    insert(root, "Bonjour", "Hi");
     insert(root, "Bonsoir", "Good Night");
     insert(root, "Au revoir", "Good bye");
 
@@ -65,8 +66,20 @@ void insert(TrieNode *root, const char *input_key, char *output_value) {
         // Go to next node (existing or just created) before checking the next letter 
         traversal = traversal->children[index];
     }
-    // When reaching the last letter, se the end of input_key flag to 1 (to indicate the end of the input_key) 
-    traversal->value = malloc(sizeof(char) * strlen(output_value));
+    // When reaching the last letter, set the translation value to the output value 
+    
+    // Free memory before doing a new malloc in case the same key is inserted several time
+    if (traversal->value != NULL) {
+    free(traversal->value);
+    }
+
+    traversal->value = malloc(sizeof(char) * strlen(output_value) + 1);
+    if (traversal->value == NULL)
+    {
+        free(root);
+        exit(1);
+    }
+    // Copy value
     strcpy(traversal->value, output_value);
 }
 
@@ -94,12 +107,10 @@ void translate(TrieNode *root, const char *input_key) {
     }
 
     if (strlen(traversal->value) > 0) {
-        translated_word = malloc(strlen(traversal->value));
-        strcpy(translated_word, traversal->value);
+        translated_word = traversal->value;
     }
     // Print results
     printf("Translation of %s is %s\n", input_key, translated_word);
-    free(translated_word);
 }
 //-------------------------------------------------------------------------------------------------
 // Function to create a new virgin node
@@ -126,5 +137,13 @@ TrieNode *create_node() {
 // Fonction to free nodes
 //-------------------------------------------------------------------------------------------------
 void free_trie(TrieNode *root) {
+    if (root != NULL) {
+
+        for (int i = 0; i < ALPHABET_SIZE; i++) {
+            free_trie(root->children[i]);
+        }
+        free(root->value);
+        free(root);
+    }
     return;
 }
