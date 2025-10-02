@@ -2,13 +2,23 @@
 ; -------------------------------
 ; MODULE : Apostrophe contextuelle (préfixes j, l, m, n, t)
 ; -------------------------------
-:C*?:j'::j'
-:C*?:m'::m'
-:C*?:t'::t'
-:C*?:l'::l'
-:C*?:s'::s'
-:C*?:n'::n'
-:C*?:c'::c'
+:C*?: j':: j'
+:C*?: m':: m'
+:C*?: t':: t'
+:C*?: l':: l'
+:C*?: s':: s'
+:C*?: n':: n'
+:C*?: c':: c'
+
+:C*?:J'::J'
+:C*?:M'::M'
+:C*?:T'::T'
+:C*?:L'::L'
+:C*?:S'::S'
+:C*?:N'::N'
+:C*?:c'::C'
+
+
 
 ;-----------------------------------------------------------------------------------------
 ; ' pour les accentuations de lettres les plus courantes (aïgues ou graves) + çédilles
