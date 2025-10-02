@@ -3,6 +3,7 @@
 ; MODULE : Apostrophe contextuelle (préfixes j, l, m, n, t)
 ; -------------------------------
 
+/*
 :C*?:J'::J'
 :C*?:M'::M'
 :C*?:T'::T'
@@ -20,6 +21,8 @@
 :C*?: n':: n'
 :C*?: c':: c'
 :C*?: d':: d'
+
+*/
 
 :C*?:k-a::k-a
 
