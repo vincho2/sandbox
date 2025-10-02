@@ -21,6 +21,11 @@
 :C*?: c':: c'
 :C*?: d':: d'
 
+:C*?:k-a:: k-a
+:C*?:t--e:: t-ê
+
+
+
 
 ;-----------------------------------------------------------------------------------------
 ; ' pour les accentuations de lettres les plus courantes (aïgues ou graves) + çédilles
