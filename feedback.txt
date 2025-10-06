@@ -1,0 +1,60 @@
+Ton code est propre et bien structuré 👍 — on reconnaît la logique du problème CS50 « COVID Tracker ».
+Mais il y a quelques points à optimiser ou corriger pour que tout tourne parfaitement (et de manière plus Pythonique).
+
+🧩 Voici une revue détaillée :
+1️⃣ Problème de logique dans la rotation des 14 jours
+
+Tu incrémentes ton compteur uniquement dans la clause else, c’est-à-dire seulement après 14 jours, mais il faut aussi l’incrémenter à chaque ajout, sinon ton index de rotation reste figé à 0 pendant les 14 premiers tours.
+👉 À déplacer hors du else, après le if/elif/else.
+
+# Update cumulative state for the current row
+cumulative_cases[state][0] = int(current_cases)
+cumulative_cases[state][1] += 1  # ← à déplacer ici
+
+2️⃣ Simplification du test if state not in cumulative_cases.keys()
+
+Tu peux simplement écrire :
+
+if state not in cumulative_cases:
+
+
+(même chose pour result).
+
+3️⃣ Conversion précoce des valeurs du CSV
+
+Tu fais int(current_cases) plusieurs fois — tu peux le convertir directement dès la lecture :
+
+current_cases = int(row["cases"])
+
+4️⃣ Le code de formatage final peut être allégé
+
+La section qui reformate les 14 valeurs pourrait être simplifiée avec une compréhension de liste :
+
+formatted_result[state] = [
+    cases[(counter + 1 + i) % 14] for i in range(14)
+]
+
+5️⃣ Vérification des entrées utilisateur
+
+Tu peux améliorer la robustesse : si l’utilisateur tape un État invalide, tu pourrais l’ignorer avec un message, au lieu de ne rien dire :
+
+else:
+    print("Unknown state.")
+
+6️⃣ Bonnes pratiques
+
+Ton main() pourrait être protégé par le classique :
+
+if __name__ == "__main__":
+    main()
+
+
+(utile si tu importes ce fichier ailleurs).
+
+💡 Résumé des points clés :
+
+✅ Corriger le compteur (counter) → le déplacer.
+✅ Simplifier les tests if key not in dict.
+✅ Convertir row["cases"] une seule fois.
+✅ Optionnel : simplifier la reconstruction du dictionnaire.
+✅ Ajouter un petit if __name__ == "__main__":.
