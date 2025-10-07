@@ -35,14 +35,14 @@
 :C*?:'E::{U+00C9} ; ' followed by E => É
 :C*?:'A::{U+00C0} ; ' followed by A => À
 :C*?:'U::{U+00D9} ; ' followed by U => Ù
-:C*?:'I::{U+00CE} ; - followed by I => Î
-:C*?:'O::{U+00D4} ; - followed by O => Ô
+;:C*?:'I::{U+00CE} ; - followed by I => Î
+;:C*?:'O::{U+00D4} ; - followed by O => Ô
 
 :C*?:'e::{U+00E9} ; ' followed by e => é
 :C*?:'a::{U+00E0} ; ' followed by a => à
 :C*?:'u::{U+00F9} ; ' followed by u => ù
-:C*?:'i::{U+00EE} ; - followed by i => î
-:C*?:'o::{U+00F4} ; ' followed by o => ô
+;:C*?:'i::{U+00EE} ; - followed by i => î
+;:C*?:'o::{U+00F4} ; ' followed by o => ô
 
 :C*?:'C::{U+00C7} ; ' followed by C => Ç
 :C*?:'c::{U+00E7} ; ' followed by c => ç
@@ -60,12 +60,16 @@
 :C*?:--::{U+002D} ; - followed by - => -
 :C*?:-A::{U+00C2} ; - followed by A => Â
 :C*?:-E::{U+00CA} ; - followed by E => Ê
+:C*?:-I::{U+00CE} ; - followed by I => Î
+:C*?:-O::{U+00D4} ; - followed by O => Ô
 
 :C*?:-U::{U+00DB} ; - followed by U => Û
 
 :C*?:-a::{U+00E2} ; - followed by a => â
 :C*?:-e::{U+00EA} ; - followed by e => ê
 :C*?:-u::{U+00FB} ; - followed by u => û
+:C*?:-i::{U+00EE} ; - followed by i => î
+:C*?:-o::{U+00F4} ; ' followed by o => ô
 
 :C*?:-2::{U+00B2} ; - followed by 2 => ²
 
