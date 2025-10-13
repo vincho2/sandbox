@@ -28,6 +28,14 @@ handleAccent(key) {
     global deadKeyCount, graveMap, graveMapMaj, aiguMap, aiguMapMaj, circMap, circMapMaj, 
     tremaMap, tremaMapMaj
 
+    
+    caps := GetKeyState("CapsLock", "T")
+
+        ; Si CapsLock est actif et la touche est une lettre minuscule
+        if caps && key ~= "^[a-z]$" {
+            key := StrUpper(key)
+        }
+
 
     if deadKeyCount = 1 {
         if graveMapMaj.Has(key) {
@@ -116,33 +124,33 @@ vkBE::SendText "."
 +vkBE::SendText ":"
 
 ; Couche AltGr
-<^>!q::Send "^"
-<^>!w::Send "<"
-<^>!e::Send ">"
-<^>!r::Send "$"
-<^>!t::Send "%"
-<^>!y::Send "@"
-<^>!u::Send "&"
-<^>!i::Send "*"
-<^>!o::Send "'"
-<^>!p::Send "``"
-<^>!a::Send "{"
-<^>!s::Send "("
-<^>!d::Send ")"
-<^>!f::Send "}"
-<^>!g::Send "="
-<^>!h::Send "\"
-<^>!j::Send "+"
-<^>!k::Send "-"
-<^>!l::Send "/"
-<^>!;::Send '`"'
-<^>!z::Send "~"
-<^>!x::Send "["
-<^>!c::Send "]"
-<^>!v::Send "_"
-<^>!b::Send "#"
-<^>!n::Send "|"
-<^>!m::Send "!"
-<^>!,::Send ";"
-<^>!.::Send ":"
-<^>!/::Send "?"
+;<^>!q::Send "^"
+;<^>!w::Send "<"
+;<^>!e::Send ">"
+;<^>!r::Send "$"
+;<^>!t::Send "%"
+;<^>!y::Send "@"
+;<^>!u::Send "&"
+;<^>!i::Send "*"
+;<^>!o::Send "'"
+;<^>!p::Send "``"
+;<^>!a::Send "{"
+;<^>!s::Send "("
+;<^>!d::Send ")"
+;<^>!f::Send "}"
+;<^>!g::Send "="
+;<^>!h::Send "\"
+;<^>!j::Send "+"
+;<^>!k::Send "-"
+;<^>!l::Send "/"
+;<^>!;::Send '`"'
+;<^>!z::Send "~"
+;<^>!x::Send "["
+;<^>!c::Send "]"
+;<^>!v::Send "_"
+;<^>!b::Send "#"
+;<^>!n::Send "|"
+;<^>!m::Send "!"
+;<^>!,::Send ";"
+;<^>!.::Send ":"
+;<^>!/::Send "?"
