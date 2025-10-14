@@ -1,5 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
+; Clavier de base doit être QWERTY international pour avoir le AltGr qui marche bien
+
 deadKeyCount := 0
 
 ; Touche morte : SC027 (correspond à ';' sur QWERTY US)
@@ -7,7 +9,7 @@ SC027::
 {
     global deadKeyCount
     deadKeyCount += 1
-    SetTimer(resetDeadKey, -2000) ; Réinitialise après 2 secondes
+    SetTimer(resetDeadKey, -1500) ; Réinitialise après x ms
 }
 
 ; Accent grave
@@ -123,34 +125,43 @@ vkBC::SendText ","
 vkBE::SendText "."
 +vkBE::SendText ":"
 
+
+; Désactivation des touches mortes en US International
+'::SendText "'"
+"::SendText "`""
+^::SendText "^"
+~::SendText "~"
+`::SendText "``"
+
+
 ; Couche AltGr
-;<^>!q::Send "^"
-;<^>!w::Send "<"
-;<^>!e::Send ">"
-;<^>!r::Send "$"
-;<^>!t::Send "%"
-;<^>!y::Send "@"
-;<^>!u::Send "&"
-;<^>!i::Send "*"
-;<^>!o::Send "'"
-;<^>!p::Send "``"
-;<^>!a::Send "{"
-;<^>!s::Send "("
-;<^>!d::Send ")"
-;<^>!f::Send "}"
-;<^>!g::Send "="
-;<^>!h::Send "\"
-;<^>!j::Send "+"
-;<^>!k::Send "-"
-;<^>!l::Send "/"
-;<^>!;::Send '`"'
-;<^>!z::Send "~"
-;<^>!x::Send "["
-;<^>!c::Send "]"
-;<^>!v::Send "_"
-;<^>!b::Send "#"
-;<^>!n::Send "|"
-;<^>!m::Send "!"
-;<^>!,::Send ";"
-;<^>!.::Send ":"
-;<^>!/::Send "?"
+^!q::SendText "^"
+<^>!w::Send "<"
+<^>!e::Send ">"
+<^>!r::Send "$"
+<^>!t::Send "%"
+<^>!y::Send "@"
+<^>!u::Send "&"
+<^>!i::Send "*"
+<^>!o::Send "'"
+<^>!p::Send "``"
+<^>!a::Send "{"
+<^>!s::Send "("
+<^>!d::Send ")"
+<^>!f::Send "}"
+<^>!g::Send "="
+<^>!h::Send "\"
+<^>!j::Send "+"
+<^>!k::Send "-"
+<^>!l::Send "/"
+<^>!;::Send '`"'
+<^>!z::Send "~"
+<^>!x::Send "["
+<^>!c::Send "]"
+<^>!v::Send "_"
+<^>!b::Send "#"
+<^>!n::Send "|"
+<^>!m::Send "!"
+<^>!,::Send ";"
+<^>!.::Send ":"
+<^>!/::Send "?"
