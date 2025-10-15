@@ -9,7 +9,7 @@ SC027::
 {
     global deadKeyCount
     deadKeyCount += 1
-    SetTimer(resetDeadKey, -1500) ; Réinitialise après x ms
+    SetTimer(resetDeadKey, -2000) ; Réinitialise après x ms
 }
 
 ; ----
