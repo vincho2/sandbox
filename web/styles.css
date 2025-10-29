@@ -1,0 +1,129 @@
+/* 🎨 -------------------- */
+/* RESET DE BASE          */
+/* ----------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  color: #222;
+}
+
+/* 🧭 -------------------- */
+/* EN-TÊTE ET NAVIGATION  */
+/* ----------------------- */
+header {
+  background-color: #222;
+  color: white;
+  padding: 1rem 2rem;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav .logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: white;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #00b4d8;
+}
+
+/* 🧱 -------------------- */
+/* SECTIONS PRINCIPALES   */
+/* ----------------------- */
+main {
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+#hero {
+  background-color: #e9ecef;
+  padding: 3rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+#hero h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+#hero p {
+  margin-bottom: 1.5rem;
+}
+
+button {
+  background-color: #00b4d8;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0096c7;
+}
+
+/* 📋 -------------------- */
+/* FORMULAIRE             */
+/* ----------------------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 400px;
+}
+
+input, textarea {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #00b4d8;
+  box-shadow: 0 0 4px rgba(0, 180, 216, 0.4);
+}
+
+/* ⚓ -------------------- */
+/* PIED DE PAGE           */
+/* ----------------------- */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #222;
+  color: white;
+}
