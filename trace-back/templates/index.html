@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Trace back BTC address
+{% endblock %}
+
+{% block main %}
+    <h3>Check for a Bitcoin address to trace back</h3>
+    <br>
+    <form action="/" method="get">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="address" placeholder="BTC address" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Trace back</button>
+    </form>
+{% endblock %}
