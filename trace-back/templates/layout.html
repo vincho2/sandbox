@@ -57,10 +57,9 @@
     </header>
     {% endif %}
 
-    <main class="container py-5">
-      <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-        {% block main %}{% endblock %}
-      </div>
-    </main>
+    {% block main %}{% endblock %}
+    {% block info %}{% endblock %}
+    {% block history %}{% endblock %}
+
   </body>
 </html>

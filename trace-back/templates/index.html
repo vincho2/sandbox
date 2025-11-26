@@ -4,13 +4,76 @@
     Trace back BTC address
 {% endblock %}
 
+<!-- Address check block -->
 {% block main %}
-    <h3>Check for a Bitcoin address to trace back</h3>
-    <br>
-    <form action="/" method="get">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="address" placeholder="BTC address" type="text">
+
+    <main class="container py-5">
+        <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
+            <h3>Check for a Bitcoin address to trace back</h3>
+            <br>
+            <form action="/" method="get">
+                <div class="mb-3 d-flex">
+                    <input autocomplete="off" autofocus class="form-control w-auto me-2" name="address" placeholder="BTC address"
+                        type="text">
+                    <button class="btn btn-primary" type="submit">Get address information</button>
+                </div>
+            </form>
+
+            <!-- Error message -->
+            {% if error %}
+                <br>
+                <p>Not able to retrieve address information, please try again with a valid address</p>
+                <p>{{ error }}</p>
+            {% endif %}
         </div>
-        <button class="btn btn-primary" type="submit">Trace back</button>
-    </form>
+{% endblock %}
+
+{% block info %}
+
+    <!-- Address info block -->
+    {% if address_info %}
+        <br>
+        <result class="container py-5">
+            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
+                <h3>Address Information</h3>
+                <br>
+                <div class="section">
+                    {% for key, value in address_info.items() %}
+                        {% if value is mapping %}    
+                            <h5>{{ key }}</h5>
+                                <ul>
+                                    {% for subkey, subvalue in value.items() %}
+                                        <li>{{ subkey }}: {{ subvalue }}</li>
+                                    {% endfor %}
+                                </ul>
+                        {% else %}
+                            <h5>{{ key }}: {{ value }}</h5>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </result>
+    {% endif %}
+
+{% endblock %}
+
+
+{% block history %}
+
+    <!-- Address history block -->
+    {% if history %}
+        <br>
+        <result class="container py-5">
+            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
+                <h3>Address Transaction History</h3>
+                <br>
+                <div class="section">
+                    {% for txs in history %}
+                        <ul>txs</ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </result>
+    {% endif %}
+
 {% endblock %}
