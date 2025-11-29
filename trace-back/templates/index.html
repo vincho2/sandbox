@@ -30,7 +30,7 @@
 
 {% block info %}
 
-    <!-- Address info block -->
+       <!-- Address info block -->
     {% if address_info %}
         <br>
         <result class="container py-5">
@@ -39,16 +39,7 @@
                 <br>
                 <div class="section">
                     {% for key, value in address_info.items() %}
-                        {% if value is mapping %}    
-                            <h5>{{ key }}</h5>
-                                <ul>
-                                    {% for subkey, subvalue in value.items() %}
-                                        <li>{{ subkey }}: {{ subvalue }}</li>
-                                    {% endfor %}
-                                </ul>
-                        {% else %}
-                            <h5>{{ key }}: {{ value }}</h5>
-                        {% endif %}
+                        <h5>{{ key }}: {{ value }}</h5>
                     {% endfor %}
                 </div>
             </div>
@@ -68,8 +59,36 @@
                 <h3>Address Transaction History</h3>
                 <br>
                 <div class="section">
-                    {% for txs in history %}
-                        <ul>txs</ul>
+                    {% for key, value in history.items() %}
+                        <h5>{{ key }}: {{ value }}</h5>
+                    {% endfor %}
+                </div>
+            </div>
+        </result>
+    {% endif %}
+
+
+{% endblock %}
+
+ <!-- Address info block -->
+    {% if address_info %}
+        <br>
+        <result class="container py-5">
+            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
+                <h3>Address Information</h3>
+                <br>
+                <div class="section">
+                    {% for key, value in address_info.items() %}
+                        {% if value is mapping %}    
+                            <h5>{{ key }}</h5>
+                                <ul>
+                                    {% for subkey, subvalue in value.items() %}
+                                        <li>{{ subkey }}: {{ subvalue }}</li>
+                                    {% endfor %}
+                                </ul>
+                        {% else %}
+                            <h5>{{ key }}: {{ value }}</h5>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
