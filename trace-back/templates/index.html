@@ -1,22 +1,22 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Trace back BTC address
+    Get BTC address history
 {% endblock %}
 
 <!-- Address check block -->
 {% block main %}
 
     <main class="container py-5">
-        <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-            <h3>Check for a Bitcoin address to trace back</h3>
+        <section class="card shadow-lg border-0 rounded-4 p-5 bg-white">
+            <h3>Enter a Bitcoin address to get its balance and history</h3>
             <br>
             <form action="/" method="get">
-                <div class="mb-3 d-flex">
+                <p class="mb-3 d-flex">
                     <input autocomplete="off" autofocus class="form-control w-auto me-2" name="address" placeholder="BTC address"
                         type="text">
-                    <button class="btn btn-primary" type="submit">Get address information</button>
-                </div>
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </p>
             </form>
 
             <!-- Error message -->
@@ -25,74 +25,96 @@
                 <p>Not able to retrieve address information, please try again with a valid address</p>
                 <p>{{ error }}</p>
             {% endif %}
-        </div>
-{% endblock %}
+        </section>
 
-{% block info %}
 
-       <!-- Address info block -->
-    {% if address_info %}
-        <br>
-        <result class="container py-5">
-            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-                <h3>Address Information</h3>
-                <br>
-                <div class="section">
-                    {% for key, value in address_info.items() %}
-                        <h5>{{ key }}: {{ value }}</h5>
-                    {% endfor %}
+        <!-- Address info block -->
+        {% if address_info %}
+            <br>
+            <p>Search result</p>
+            <section class="card shadow-lg border-0 rounded-4 p-4 bg-white">
+                <!-- Line 1: Adress -->
+                <h5 class="address-id">
+                    <span>Address:</span>
+                    <span class="address-id-value">{{ address_info.address_id }}</span>
+                </h5>
+
+                <!-- Line 2: Confirmed balance -->
+                <div class="address-row">
+                    <div class="address-item">
+                        <span class="label">Address balance (confirmed transactions):</span>
+                        <span class="value">{{ format_amount(address_info.conf_balance) }}</span>
+                    </div>
+                    <div class="address-item">
+                        <span class="label">Number of confirmed transactions:</span>
+                        <span class="value">{{ address_info.tx_count }}</span>
+                    </div>
                 </div>
-            </div>
-        </result>
-    {% endif %}
+
+                <!-- Ligne 3 : Pending transaction in mempool -->
+                {% if address_info.pool_tx_count > 0 %}
+                    <div class="address-row">
+                        <div class="address-item">
+                            <span class="label">Pending mempool in/out flow:</span>
+                            <span class="value">{{ format_amount(address_info.pool_io_flow) }}</span>
+                        </div>
+                        <div class="address-item">
+                            <span class="label">Number of transactions pending in the mempool:</span>
+                            <span class="value">{{ address_info.pool_tx_count }}</span>
+                        </div>
+                    </div>
+                    <div class="address-row">
+                        <div class="address-item">
+                            <span class="label">Balance including mempool transactions:</span>
+                            <span class="value">{{ format_amount(address_info.conf_balance + address_info.pool_io_flow) }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="label">No pending transaction in the mempool</p>
+                {% endif %}
+                
+                <!-- Address history block -->
+                {% if tx_history %}
+                    <br>
+                    <div class="tx-history">
+                        {% for tx in tx_history %}
+                            <div class="tx-line {% if tx.flow_direction == 'receive' %}receive{% else %}send{% endif %}">
+                                <!-- Arrow -->
+                                <div class="tx-arrow">
+                                    {% if tx.flow_direction == 'receive' %}
+                                        &#8592; <!-- ← to receive -->
+                                    {% else %}
+                                        &#8594; <!-- → to send -->
+                                    {% endif %}
+                                </div>
+
+                                <!-- Balance info -->
+                                <div class="tx-info">
+                                    <div class="tx-amount">
+                                        {{ format_amount(tx.flow_amount) }}
+                                    </div>
+                                    <div class="tx-balance">
+                                        {{ format_amount(tx.new_balance) }}
+                                    </div>
+                                </div>
+
+                                <!-- More info ? -->
+                                <div class="tx-id">
+                                    {{ tx.tx_id[:10] }}… 
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                {% endif %}
+            </section>
+
+        {% endif %}
+    </main>
 
 {% endblock %}
 
-
-{% block history %}
-
-    <!-- Address history block -->
-    {% if history %}
-        <br>
-        <result class="container py-5">
-            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-                <h3>Address Transaction History</h3>
-                <br>
-                <div class="section">
-                    {% for key, value in history.items() %}
-                        <h5>{{ key }}: {{ value }}</h5>
-                    {% endfor %}
-                </div>
-            </div>
-        </result>
-    {% endif %}
-
-
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% endblock %}
 
- <!-- Address info block -->
-    {% if address_info %}
-        <br>
-        <result class="container py-5">
-            <div class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-                <h3>Address Information</h3>
-                <br>
-                <div class="section">
-                    {% for key, value in address_info.items() %}
-                        {% if value is mapping %}    
-                            <h5>{{ key }}</h5>
-                                <ul>
-                                    {% for subkey, subvalue in value.items() %}
-                                        <li>{{ subkey }}: {{ subvalue }}</li>
-                                    {% endfor %}
-                                </ul>
-                        {% else %}
-                            <h5>{{ key }}: {{ value }}</h5>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-        </result>
-    {% endif %}
-
-{% endblock %}

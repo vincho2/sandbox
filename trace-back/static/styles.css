@@ -21,3 +21,98 @@ nav .navbar-brand .green
 {
     color: #2e944b;
 }
+
+.tx-history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+    font-family: sans-serif;
+}
+
+.tx-line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f4f4f4;
+}
+
+.tx-line.receive {
+    color: #0a0; /* vert réception */
+}
+
+.tx-line.send {
+    color: #c00; /* rouge envoi */
+    justify-content: flex-end;
+}
+
+.tx-arrow {
+    font-size: 20px;
+    flex: 0 0 20px;
+}
+
+.tx-info {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    flex: 1;
+}
+
+.tx-amount {
+    font-weight: bold;
+}
+
+.tx-balance {
+    font-size: 0.85em;
+    color: #555;
+}
+
+.tx-id {
+    font-size: 0.75em;
+    color: #888;
+}
+
+.address-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 1200px;
+    margin: 20px auto;
+    font-family: sans-serif;
+}
+
+.address-id {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+
+.address-id-value {
+    color: #ea433b;
+}
+
+
+
+.address-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.address-item {
+    display: flex;
+    gap: 6px;
+}
+
+.label {
+    color: #555;
+}
+
+.value {
+    font-weight: bold;
+}
+

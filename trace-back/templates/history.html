@@ -1,16 +1,30 @@
-{% extends "layout.html" %}
+ <br>
+<div class="tx-history">
+    {% for tx in tx_history %}
+        <div class="tx-line {% if tx.flow_direction == 'receive' %}receive{% else %}send{% endif %}">
+            <!-- Arrow -->
+            <div class="tx-arrow">
+                {% if tx.flow_direction == 'receive' %}
+                    &#8592; <!-- ← to receive -->
+                {% else %}
+                    &#8594; <!-- → to send -->
+                {% endif %}
+            </div>
 
-{% block title %}
-    History
-{% endblock %}
+            <!-- Balance info -->
+            <div class="tx-info">
+                <div class="tx-amount">
+                    {{ format_amount(tx.flow_amount) }}
+                </div>
+                <div class="tx-balance">
+                    {{ format_amount(tx.new_balance) }}
+                </div>
+            </div>
 
-{% block main %}
-    <h3>history</h3>
-    <br>
-    <form action="/" method="post">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="address" placeholder="BTC address" type="text">
+            <!-- More info ? -->
+            <div class="tx-id">
+                {{ tx.tx_id[:10] }}… 
+            </div>
         </div>
-        <button class="btn btn-primary" type="submit">Trace back</button>
-    </form>
-{% endblock %}
+    {% endfor %}
+</div>
