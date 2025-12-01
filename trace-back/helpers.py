@@ -63,7 +63,7 @@ def get_address_info(address):
 def get_tx_history(address, last_tx_id, tx_count, balance):
     
     # Set suffix to call the proper api url in case the function is called after scrolling
-    url_suffix = f"/chain/{last_tx_id}" if last_tx_id != -1 else "" 
+    url_suffix = f"/chain/{last_tx_id}" if last_tx_id is not None else "" 
 
     # API URL
     txs_history_url = f"{API_BASE_URL}/address/{address}/txs{url_suffix}"
@@ -75,13 +75,14 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
         response.raise_for_status()
         raw_result = response.json()
         
-        # Initialize resulting list
-        result = []
+        # Initialize resulting transaction history list
+        tx_history = []
 
-        i = tx_count
         # Get transactions info and add them to the resulting dictionary
         for tx in raw_result:
             
+            # Get transaction id
+            tx_id = tx["txid"]
             # Initialize paid amount
             paid_amount = 0
             # Get transaction source data
@@ -117,7 +118,7 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
             # Build the resulting dictionary for the current transaction
             tx_info = {
                 "tx_nb": tx_count,
-                "tx_id": tx["txid"],
+                "tx_id": tx_id,
                 "block_confirmed": block_info["confirmed"],
                 "flow_direction": flow_direction,
                 "flow_amount": flow_amount,
@@ -130,22 +131,23 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
                 tx_info["block_nb"] = block_info["block_height"]
                 tx_info["block_date_time"] = datetime.fromtimestamp(block_info["block_time"])
 
-            result.append(tx_info)
+            tx_history.append(tx_info)
 
             # Decrement transaction number and update balance to the previous one
             tx_count -= 1
             balance = old_balance
-
+            
+            
     # Catch exceptions
     except requests.RequestException as e:
         raise ValueError(f"Request Error: {e}")
     except KeyError as e:
-        raise ValueError(f"Missing expected field in JSON: {e} ({tx_status} transaction {i})")
+        raise ValueError(f"Missing expected field in JSON: {e} ({tx_status} transaction {tx_count})")
     except ValueError as e:
         raise ValueError(f"JSON parsing error: {e}")
     
-    # Return result
-    return result, tx_count, balance
+    # Return result with the transaction history
+    return tx_history
 
 
 # --------------------------------------------------------------------------------------------------
