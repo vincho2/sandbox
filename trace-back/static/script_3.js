@@ -1,7 +1,41 @@
+let lastTxId = null;
 let loading = false;
+let address = null;
 
-let lastTxId = "{{ tx_history[-1].tx_id if tx_history else '' }}"; // revois comment cette variable obtient sa valeur
-let address = "{{ address_info.address_id }}";
+document.getElementById("address-input").addEventListener("change", async (e) => {
+    address = e.target.value;
+    await loadInitialTxs();
+});
+
+async function loadInitialTxs() {
+    const response = await fetch(`/api/address/${address}/txs/initial`);
+    const data = await response.json();
+
+    lastTxId = data.last_tx_id;
+    renderAddressInfo(data.address_info);
+    appendTxsToPage(data.tx_history);
+}
+
+async function loadNextTxs() {
+    if (loading || !lastTxId) return;
+    loading = true;
+
+    const response = await fetch(`/api/address/${address}/txs/next?last=${lastTxId}`);
+    const data = await response.json();
+
+    appendTxsToPage(data.tx_history);
+
+    if (data.tx_history.length > 0)
+        lastTxId = data.tx_history[data.tx_history.length - 1].tx_id;
+
+    loading = false;
+}
+
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 300) {
+        loadNextTxs();
+    }
+});
 
 const observer = new IntersectionObserver(async entries => {
     if (entries[0].isIntersecting && !loading) {
@@ -11,10 +45,7 @@ const observer = new IntersectionObserver(async entries => {
         const res = await fetch(url);
         const data = await res.json();  // quel format ?
 
-        if (data.length === 0) {
-            observer.disconnect(); // plus rien à charger
-            return;
-        }
+        
 
         // append dans la liste
         const container = document.getElementById("tx-history");
