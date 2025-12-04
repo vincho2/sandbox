@@ -35,23 +35,44 @@ form.addEventListener("submit", async (e) => {
 // Function to load the address information and the initial transactions list calling the dedicated api
 // -------------------------------------------------------------------------------------------------
 async function loadInitialTxs() {
-    const response = await fetch(`/api/address/${address}/txs/initial`);
-    const data = await response.json();
+    
+    try {
+        const response = await fetch(`/api/address/${address}/txs/initial`);
+    
+        if (!response.ok) {
+            throw new Error (`HTTP error ${response.status}`);
+        }
 
-    // ======> Add logic in case error is not empty or if no address info or no tx_history -------------------
+        let data;
+    
+        try {
+            data = await response.json();
+        } catch(error) {
+            throw new Error("Invalid JSON loaded from server");
+        }
 
-    // Display address information
-    renderAddressInfo(data.address_info);
-    // Display the most recent transactions
-    appendTxsToPage(data.tx_history);
+        if (data.error) {
+            throw new Error(`Error coming from API call: ${data.error}`);
+        } else if (!data.address_info || !data.tx_history || !data.last_tx_id) {
+            throw new Error("Missing information in the API call");
+        }
+    
+        // Display address information
+        renderAddressInfo(data.address_info);
+        // Display the most recent transactions
+        appendTxsToPage(data.tx_history);
 
-    //  In case a full batch of transactions was loaded...
-    if (data.tx_history.length === maxNbTxsApi) {
-        // Activate observer to load next transaction batch
-        setupObserver();
-        // Update last transaction id for next api call
-        lastTxId = data.last_tx_id;
+        //  In case a full batch of transactions was loaded...
+        if (data.tx_history.length === maxNbTxsApi) {
+            // Activate observer to load next transaction batch
+            setupObserver();
+            // Update last transaction id for next api call
+            lastTxId = data.last_tx_id;
+        }
 
+    } catch (err) {
+        console.error("load Initial transaction error:", err);
+        showError(err);
     }
 }
 
@@ -104,6 +125,19 @@ async function loadNextTxs() {
 // Function to display address info
 // -------------------------------------------------------------------------------------------------
 function renderAddressInfo(address_info) {
+    
+    // Define variable mapped to address info block in index.html
+    const addressInfoContainer = document.querySelector("#address-info");
+
+    // Safety net in case address info block is not present in index.html
+    if (!addressInfoContainer) return;
+
+    // Empty old content
+    addressInfoContainer.innerHTML = "";
+
+    // Build the block
+    
+
     // TO DO
     return;
 }
@@ -130,6 +164,28 @@ function renderTxHtml(tx) {
                 <div class="tx-balance">${tx.new_balance_btc}</div>
             </div>
         </div>
+    `;
+}
+
+// -------------------------------------------------------------------------------------------------
+// Function to display an error if the address info is not well retrieved ====> use a template
+// -------------------------------------------------------------------------------------------------
+function showError(error) {
+
+    // Define variable mapped to error block in index.html
+    const errorInfoContainer = document.querySelector("#error-display");
+
+    // Safety net in case error block is not present in index.html
+    if (!errorInfoContainer) return;
+
+    // Empty old content
+    errorInfoContainer.innerHTML = "";
+
+    // Return new error block
+    return `
+        <br>
+        <p>Not able to retrieve address information, please try again with a valid address</p>
+        <p>${error}</p>
     `;
 }
 

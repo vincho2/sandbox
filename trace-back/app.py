@@ -1,12 +1,12 @@
 import requests
 import sqlite3
-from flask import Flask, redirect, render_template, request, jsonify 
+from flask import Flask, redirect, render_template, request, jsonify, send_from_directory
 
 
 from helpers import format_amount, get_address_info, get_tx_history, apology, login_required, lookup, usd
 
 # Configure application
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="")
 app.jinja_env.globals.update(format_amount=format_amount)
 
 ADDRESS = "bc1pmzlcd8sce4e7lvwr6thh6qwcvvmp0v5wg5n69p3ajndmqe8rvdlqc6skjq"
@@ -33,7 +33,7 @@ def after_request(response):
 def index():
     
     # return home page with the results
-    return render_template("index.html")
+    return app.send_static_file("index.html")
 
 # --------------------------------------------------------------------------------------------------
 # First address search route
