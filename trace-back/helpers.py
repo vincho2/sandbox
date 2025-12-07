@@ -48,11 +48,11 @@ def get_address_info(address):
 
     # Catch exceptions
     except requests.RequestException as e:
-        raise ValueError(f"Request error: {e}")
+        raise ValueError(f"Address info API - Request error: {e}")
     except KeyError as e:
-        raise ValueError(f"Missing expected field in JSON: {e}")
+        raise ValueError(f"API - Missing expected field in Address info JSON: {e}")
     except ValueError as e:
-        raise ValueError(f"JSON parsing error: {e}")
+        raise ValueError(f"API - Address info JSON parsing error: {e}")
     
     # Return result if no exception raised
     return result
@@ -140,11 +140,11 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
             
     # Catch exceptions
     except requests.RequestException as e:
-        raise ValueError(f"Request Error: {e}")
+        raise ValueError(f"Transaction history API - Request Error: {e}")
     except KeyError as e:
         raise ValueError(f"Missing expected field in JSON: {e} ({tx_status} transaction {tx_count})")
     except ValueError as e:
-        raise ValueError(f"JSON parsing error: {e}")
+        raise ValueError(f"API - Transaction history - JSON parsing error: {e}")
     
     # Return result with the transaction history
     return tx_history

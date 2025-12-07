@@ -5,24 +5,60 @@ let loading = false;
 let observer;
 
 const maxNbTxsApi = 25;
-// Get form from document
-const form = document.querySelector("form");
-// Get sentinel from document (page end)
-const sentinel = document.querySelector("#page-end");
+
+// Get html elements
+const el = {
+    // DOM static elements
+    form: document.querySelector("form"),
+    searchResult: document.getElementById("search-result"),
+    errorDisplay: document.getElementById("error-display"),
+    sentinel: document.getElementById("page-end"),
+    // Templates
+    errTpl: document.getElementById("error-display-template"),
+    searchResultTpl: document.getElementById("search-result-template"),
+    addrInfoTpl: document.getElementById("address-info-template"),
+    txTpl: document.getElementById("tx-template")
+};
+
+// Check each element existence
+for (const [key, value] of Object.entries(el)) {
+    if (!value) throw new Error(`Missing required HTML element: ${key}`);
+}
+
+// Initialize address-info required data
+const requiredAddressFields = [
+    "address_id",
+    "conf_balance",
+    "tx_count",
+    "pool_tx_count",
+    "pool_io_flow"
+];
+
+// Initialize transaction information required data
+const requiredTxInfoFields = [
+    "tx_nb",
+    "tx_id",
+    "block_confirmed",
+    "flow_direction",
+    "flow_amount",
+    "old_balance",
+    "new_balance"
+];
 
 // Load address information and the initial transactions list upon address submission from the page form
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+el.form.addEventListener("submit", async (event) => {
+    event.preventDefault();
     // Get address from the form
-    address = form.address.value;
+    address = el.form.address.value;
     // Return nothing if no address is input
     if (!address) return;
 
     // Reinitialize last transaction id and /empty results from html in case of past search
     lastTxId = null;
     loading = false;
-    const searchResult = document.querySelector("#search-result");
     searchResult.innerHTML = "";
+    errorDisplay.innerHTML = "";
+
     // Deconnect observer if active from previous search
     if (observer) observer.disconnect();
 
@@ -39,30 +75,32 @@ async function loadInitialTxs() {
     try {
         const response = await fetch(`/api/address/${address}/txs/initial`);
     
+        // Catch any error coming from the HTTP request
         if (!response.ok) {
             throw new Error (`HTTP error ${response.status}`);
         }
 
+        // Initialize data object
         let data;
     
+        // Catch error if data is not a proper JSON file
         try {
             data = await response.json();
         } catch(error) {
-            throw new Error("Invalid JSON loaded from server");
+            throw new Error(`Invalid JSON loaded from server: ${error}`);
         }
-
+        // Catch any error returned by the API caught on server side
         if (data.error) {
             throw new Error(`Error coming from API call: ${data.error}`);
-        } else if (!data.address_info || !data.tx_history || !data.last_tx_id) {
-            throw new Error("Missing information in the API call");
         }
-    
-        // Display address information
-        renderAddressInfo(data.address_info);
-        // Display the most recent transactions
-        appendTxsToPage(data.tx_history);
+        
+        // Catch any error coming from data content
+        validateData(data);
 
-        //  In case a full batch of transactions was loaded...
+        // If no error, return search results
+        renderSearchResult(data);
+    
+        //  In case a full batch of transactions was loaded:
         if (data.tx_history.length === maxNbTxsApi) {
             // Activate observer to load next transaction batch
             setupObserver();
@@ -76,21 +114,66 @@ async function loadInitialTxs() {
     }
 }
 
-// -------------------------------------------------------------------------------------------------
-// Function to setup observer
-// -------------------------------------------------------------------------------------------------
-function setupObserver() {
 
-    // Define observer
-    observer = new IntersectionObserver(async (entries) => {
-        if (entries[0].isIntersecting) {
-            await loadNextTxs();
-        }
-    });
+// -------------------------------------------------------------------------------------------------
+// Function to display search result
+// -------------------------------------------------------------------------------------------------
+function renderSearchResult(data) {
 
-    // Activate observer
-    obverser.observe(sentinel);
+    // Clone template
+    const clone = el.searchResultTpl.content.cloneNode(true);
+    
+    // Append address info to template
+    const addressInfoContainer = clone.getElementById("address-info");
+    if (!addressInfoContainer) {
+        console.error("No Address info placeholder in the template");
+    } else {
+        const addressInfo = renderAddressInfo(data.address_info);
+        addressInfoContainer.innerHTML = "";
+        addressInfoContainer.appendChild(addressInfo);
+    }
+
+    // Append transaction history to template
+    const txHistoryContainer = clone.getElementById("tx-history");
+    if (!txHistoryContainer) {
+        console.error("No Transaction history placeholder in the template");
+    } else {
+        const txHistory = renderTxHistory(data.tx_history);
+        txHistoryContainer.innerHTML = "";
+        txHistoryContainer.appendChild(txHistory);
+    }
+
+    // Append search results to document
+    el.searchResult.innerHTML = "";
+    el.searchResult.appendChild(clone);
+
 }
+
+// -------------------------------------------------------------------------------------------------
+// Function to display address info
+// -------------------------------------------------------------------------------------------------
+function renderAddressInfo(address_info) {
+
+    // Clone template
+    const clone = el.addrInfoTpl.content.cloneNode(true);
+
+    // Populate data
+    clone.querySelector("[data-address-id]").textContent = address_info.address_id;
+    // NEXT ............................  TO DO .............    
+
+    // return the clone
+    return clone;
+}
+
+// -------------------------------------------------------------------------------------------------
+// Function to display the list of transaction
+// -------------------------------------------------------------------------------------------------
+function appendTxsToPage(tx_history) {
+    // TO DO
+    return;
+}
+
+
 
 // -------------------------------------------------------------------------------------------------
 // Function to load next transaction calling the dedicated api
@@ -122,38 +205,9 @@ async function loadNextTxs() {
 
 
 // -------------------------------------------------------------------------------------------------
-// Function to display address info
-// -------------------------------------------------------------------------------------------------
-function renderAddressInfo(address_info) {
-    
-    // Define variable mapped to address info block in index.html
-    const addressInfoContainer = document.querySelector("#address-info");
-
-    // Safety net in case address info block is not present in index.html
-    if (!addressInfoContainer) return;
-
-    // Empty old content
-    addressInfoContainer.innerHTML = "";
-
-    // Build the block
-    
-
-    // TO DO
-    return;
-}
-
-// -------------------------------------------------------------------------------------------------
-// Function to display the list of transaction
-// -------------------------------------------------------------------------------------------------
-function appendTxsToPage(tx_history) {
-    // TO DO
-    return;
-}
-
-// -------------------------------------------------------------------------------------------------
 // Function to display the a transaction ====> use a template
 // -------------------------------------------------------------------------------------------------
-function renderTxHtml(tx) {
+function renderTxHistory(tx) {
     return `
         <div class="tx-line ${tx.flow_direction}">
             <div class="tx-arrow">
@@ -168,25 +222,70 @@ function renderTxHtml(tx) {
 }
 
 // -------------------------------------------------------------------------------------------------
-// Function to display an error if the address info is not well retrieved ====> use a template
+// Function to display an error if the address info is not well retrieved
 // -------------------------------------------------------------------------------------------------
 function showError(error) {
 
-    // Define variable mapped to error block in index.html
-    const errorInfoContainer = document.querySelector("#error-display");
+    // Generic error message
+    const genericError = "Not able to retrieve address information, please try again with a valid address"
 
-    // Safety net in case error block is not present in index.html
-    if (!errorInfoContainer) return;
+    // Clone template
+    const clone = el.errTpl.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.hidden = false;
 
-    // Empty old content
-    errorInfoContainer.innerHTML = "";
+    // Populate content
+    clone.querySelector("[data-error-generic]").textContent = genericError;
+    clone.querySelector("[data-error-message]").textContent = error;
 
-    // Return new error block
-    return `
-        <br>
-        <p>Not able to retrieve address information, please try again with a valid address</p>
-        <p>${error}</p>
-    `;
+    // Add clone to document
+    el.errorDisplay.appendChild(clone);
 }
 
+// -------------------------------------------------------------------------------------------------
+// Function to setup observer
+// -------------------------------------------------------------------------------------------------
+function setupObserver() {
 
+    // Define observer
+    observer = new IntersectionObserver(async (entries) => {
+        if (entries[0].isIntersecting) {
+            await loadNextTxs();
+        }
+    });
+
+    // Activate observer
+    obverser.observe(el.sentinel);
+}
+
+// -------------------------------------------------------------------------------------------------
+// Function to validate the load initial data API response
+// -------------------------------------------------------------------------------------------------
+function validateData(data) {
+    if (!data || typeof data !== "object") {
+        throw new Error("Invalid JSON format returned by API");
+    }
+
+    // Check address info format
+    if (!data.address_info || typeof data.address_info !== "object") {
+        throw new Error("Invalid JSON returned by API, missing or invalid address_info object");
+    }
+
+    const missingAddress = requiredAddressFields.filter(k => !(k in data.address_info));
+    if (missingAddress.length > 0) {
+        throw new Error(`Invalid JSON returned by API, missing field(s) in address_info: ${missingAddress.join(", ")}`);
+    }
+
+    // Check transaction history and last transaction id
+    if (!Array.isArray(data.tx_history)) {
+        throw new Error("Invalid JSON returned by API, tx_history should be an array");
+    }
+    if (!data.last_tx_id) {
+        throw new Error("Invalid JSON returned by API, missing last_tx_id");
+    }
+
+    // Check that transaction history is not empty
+    if (data.tx_history.length === 0) {
+        throw new Error("Invalid JSON returned by API, tx_history is empty");
+    }
+}

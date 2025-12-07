@@ -14,7 +14,6 @@
 
         <title>Get BTC address history</title>
 
-            
     </head>
 
     <body>
@@ -59,18 +58,13 @@
                         <button class="btn btn-primary" type="submit">Search</button>
                     </p>
                 </form>
-                <!-- Error in case of wrong results-->
+                <!-- Error block in case of wrong results -->
                 <div id="error-display"></div>
             </section>
 
             <!-- Result block -->
-            <section id="search-result">
-                <!-- Address info block -->
-                <div id="address-info"></div>
-                <!-- Transaction history block -->
-                <div id="tx-history"></div>
-            </section>
-            
+            <section id="search-result"></section>
+                
             <!-- Sentinel for infinite scroll -->
             <section id="page-end"></section>
 
@@ -81,16 +75,68 @@
         <!-- Templates (not visible, used by JS) -->
         <!-- -------------------------------------------------------------------------------------->
 
-        <!-- Template d’un bloc "address info" -->
+
+
+        <!-- TEMPLATE - Result block -------------------------------------------------------------->
+        <template id="search-result-template">
+            <!-- Search result title (hidden intitially) -->
+            <h3 id="search-result-title">Search result</h3>
+            <!-- Address info block -->
+            <div id="address-info"></div>
+            <!-- Transaction history block -->
+            <div id="tx-history"></div>
+        </template>
+            
+        <!-- TEMPLATE - Address info block -------------------------------------------------------->
         <template id="address-info-template">
-            <section class="address-info">
-                <h2>Address</h2>
-                <p class="funded"></p>
-                <p class="spent"></p>
+            <!-- Address info block template  -->       
+            <section class="card shadow-lg border-0 rounded-4 p-4 bg-white">
+
+                <!-- Line 1: Adress -->
+                <h5 class="address-id">
+                    <span>Address:</span>
+                    <span class="address-id-value" data-address-id></span>
+                </h5>
+
+                <!-- Line 2: Confirmed balance -->
+                <div class="address-row">
+                    <div class="address-item">
+                        <span class="label">Address balance (confirmed transactions):</span>
+                        <span class="value" data-conf-balance></span>
+                    </div>
+                    <div class="address-item">
+                        <span class="label">Number of confirmed transactions:</span>
+                        <span class="value" data-conf-tx-count></span>
+                    </div>
+                </div>
+
+                <!-- Line 3 : Pending transaction in mempool -->
+                <div id="mempool-info" hidden>
+                    <div class="address-row">
+                        <div class="address-item">
+                            <span class="label">Pending mempool in/out flow:</span>
+                            <span class="value" data-pool-io-flow></span>
+                        </div>
+                        <div class="address-item">
+                            <span class="label">Number of transactions pending in the mempool:</span>
+                            <span class="value" data-pool-tx-count></span>
+                        </div>
+                    </div>
+                    <div class="address-row">
+                        <div class="address-item">
+                            <span class="label">Balance including mempool transactions:</span>
+                            <span class="value" data-total-balance></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="mempool-no-info" hidden>
+                    <p class="label">No pending transaction in the mempool</p>
+                </div>
             </section>
         </template>
 
-        <!-- Template d’une transaction -->
+
+        <!-- TEMPLATE - Transaction block TO DO --------------------------------------------------------->
         <template id="tx-template">
             <article class="tx">
                 <span class="tx-id"></span>
@@ -99,7 +145,11 @@
             </article>
         </template>
 
-        <!-- Template error -->
+        <!-- TEMPLATE - Error block --------------------------------------------------------------->
+         <div id="error-display-template" hidden>
+            <p data-error-generic></p>
+            <p data-error-message></p>
+        </div>
 
     </body>
 
