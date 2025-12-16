@@ -6,86 +6,59 @@
 
         <!-- Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
         <link rel="stylesheet" href="/styles.css"/>
-        <script src="/main.js" defer></script>
+        <script type="module" defer src="/js/main.js"></script>
 
         <title>Get BTC address history</title>
 
     </head>
 
     <body>
-        <nav class="border navbar navbar-expand-md navbar-light">
+        <!-- Navbar with search -->
+        <nav id="main-navbar" class="navbar-expand-md navbar-light bg-white shadow-sm fixed-top p-3">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/"><span class="blue">C</span></a>
-                <button
-                aria-controls="navbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-                class="navbar-toggler"
-                data-bs-target="#navbar"
-                data-bs-toggle="collapse"
-                type="button"
-                >
-                <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav ms-auto mt-2">
-                    <li class="nav-item">
-                    <a class="nav-link" href="/placeholder1">placeholder</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="/placeholder2">placeholder2</a>
-                    </li>
-                </ul>
-                </div>
-            </div>
-        </nav>
-    
-        <main class="container py-5">
+                <div class="d-flex w-100">
+                    <a class="navbar-brand me-3" href="/">
+                        <img src="img/favicon.ico" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+                    </a>
 
-            <!-- Address check block -->
-            <section id="search-input" class="card shadow-lg border-0 rounded-4 p-5 bg-white">
-                <h3>Enter a Bitcoin address to get its balance and history</h3>
-                <br>
-                <!-- Form -->
-                <form action="/" method="get">
-                    <p class="mb-3 d-flex">
-                        <input autocomplete="off" autofocus class="form-control w-auto me-2" name="address" placeholder="BTC address"
-                            type="text">
+                    <form class="d-flex mb-3 flex-grow-1" action="/" method="get">
+                        <input autocomplete="off" autofocus class="form-control me-3" name="address" placeholder="Enter BTC address" type="text">
                         <button class="btn btn-primary" type="submit">Search</button>
-                    </p>
-                </form>
-                <!-- Error block in case of wrong results -->
-                <div id="error-display"></div>
-            </section>
+                    </form>
 
-            <!-- Result block -->
-            <section id="search-result"></section>
+                </div>
+                <div id="loading-indicator" class="ms-2 d-none d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                    <span class="small text-muted">Loading…</span>
+                </div>
+
+
+                <div id="error-display" class="text-danger small w-100"></div>
+                <div id="address-info" class="w-100"></div>
+            </div>
+            
+            
+        </nav>
+
+        <!-- Main content -->
+        <main class="container" id="main-content" hidden>
+            <!-- Transaction history block -->
+            <section id="tx-history-list" class="card shadow-lg border-0 rounded-4 p-4 bg-white"></section>
                 
             <!-- Sentinel for infinite scroll -->
             <section id="page-end"></section>
-
         </main>
-
 
         <!-- -------------------------------------------------------------------------------------->
         <!-- Templates (not visible, used by JS) -->
         <!-- -------------------------------------------------------------------------------------->
 
-
-
-        <!-- TEMPLATE - Result block -------------------------------------------------------------->
-        <template id="search-result-template">
-            <!-- Search result title (hidden intitially) -->
-            <h3 id="search-result-title">Search result</h3>
-            <!-- Address info block -->
-            <div id="address-info"></div>
-            <!-- Transaction history block -->
-            <div id="tx-history"></div>
-        </template>
             
         <!-- TEMPLATE - Address info block -------------------------------------------------------->
         <template id="address-info-template">
@@ -102,7 +75,8 @@
                 <div class="address-row">
                     <div class="address-item">
                         <span class="label">Address balance (confirmed transactions):</span>
-                        <span class="value" data-conf-balance></span>
+                        <span class="value" data-conf-balance-sats></span>
+                        <span class="text-muted" data-conf-balance-btc></span>
                     </div>
                     <div class="address-item">
                         <span class="label">Number of confirmed transactions:</span>
@@ -115,7 +89,8 @@
                     <div class="address-row">
                         <div class="address-item">
                             <span class="label">Pending mempool in/out flow:</span>
-                            <span class="value" data-pool-io-flow></span>
+                            <span class="value" data-pool-io-flow-sats></span>
+                            <span class="text-muted" data-pool-io-flow-btc></span>
                         </div>
                         <div class="address-item">
                             <span class="label">Number of transactions pending in the mempool:</span>
@@ -125,7 +100,8 @@
                     <div class="address-row">
                         <div class="address-item">
                             <span class="label">Balance including mempool transactions:</span>
-                            <span class="value" data-total-balance></span>
+                            <span class="value" data-total-balance-sats></span>
+                            <span class="text-muted" data-total-balance-btc></span>
                         </div>
                     </div>
                 </div>
@@ -138,108 +114,49 @@
 
         <!-- TEMPLATE - Transaction block TO DO --------------------------------------------------------->
         <template id="tx-template">
-            <article class="tx">
-                <span class="tx-id"></span>
-                <span class="tx-amount"></span>
-                <span class="tx-date"></span>
-            </article>
+            <div class="tx-card d-flex align-items-center py-2 border-bottom">
+
+                <!-- ICON -->
+                <div class="me-3">
+                <i class="bi fs-3" data-tx-icon></i>
+                </div>
+
+                <!-- CENTER -->
+                <div class="flex-grow-1">
+                <div class="fw-semibold">
+                    Transaction #<span data-tx-nb></span>
+                </div>
+
+                <div class="text-muted small">
+                    <span data-block-datetime></span>
+                    <span data-tx-status></span>
+                </div>
+                </div>
+
+                <!-- AMOUNT and BALANCE -->
+                <div class="text-end">
+                    <div class="fw-bold fs-5">
+                        <span data-tx-amount-sats></span>
+                        <span class="text-muted small" data-tx-amount-btc></span>
+
+                    </div>
+                    <div class="text-muted small">
+                        New Balance: <span data-new-balance-sats></span>
+                        <span data-new-balance-btc></span>
+                    </div>
+                </div>
+            </div>
         </template>
 
+
+
         <!-- TEMPLATE - Error block --------------------------------------------------------------->
-         <div id="error-display-template" hidden>
+        <template id="error-display-template">
             <p data-error-generic></p>
-            <p data-error-message></p>
-        </div>
+            <p class="text-muted" data-error-message></p>
+        </template>
 
     </body>
-
-
-            <!-- Address info block -->
-            {% if address_info %}
-                <br>
-                <p>Search result</p>
-                <section class="card shadow-lg border-0 rounded-4 p-4 bg-white">
-                    <!-- Line 1: Adress -->
-                    <h5 class="address-id">
-                        <span>Address:</span>
-                        <span class="address-id-value">{{ address_info.address_id }}</span>
-                    </h5>
-
-                    <!-- Line 2: Confirmed balance -->
-                    <div class="address-row">
-                        <div class="address-item">
-                            <span class="label">Address balance (confirmed transactions):</span>
-                            <span class="value">{{ format_amount(address_info.conf_balance) }}</span>
-                        </div>
-                        <div class="address-item">
-                            <span class="label">Number of confirmed transactions:</span>
-                            <span class="value">{{ address_info.tx_count }}</span>
-                        </div>
-                    </div>
-
-                    <!-- Ligne 3 : Pending transaction in mempool -->
-                    {% if address_info.pool_tx_count > 0 %}
-                        <div class="address-row">
-                            <div class="address-item">
-                                <span class="label">Pending mempool in/out flow:</span>
-                                <span class="value">{{ format_amount(address_info.pool_io_flow) }}</span>
-                            </div>
-                            <div class="address-item">
-                                <span class="label">Number of transactions pending in the mempool:</span>
-                                <span class="value">{{ address_info.pool_tx_count }}</span>
-                            </div>
-                        </div>
-                        <div class="address-row">
-                            <div class="address-item">
-                                <span class="label">Balance including mempool transactions:</span>
-                                <span class="value">{{ format_amount(address_info.conf_balance + address_info.pool_io_flow) }}</span>
-                            </div>
-                        </div>
-                    {% else %}
-                        <p class="label">No pending transaction in the mempool</p>
-                    {% endif %}
-                    
-                    <!-- Address history block -->
-                    {% if tx_history %}
-                        <br>
-                        <div class="tx-history">
-                            {% for tx in tx_history %}
-                                <div class="tx-line {% if tx.flow_direction == 'receive' %}receive{% else %}send{% endif %}">
-                                    <!-- Arrow -->
-                                    <div class="tx-arrow">
-                                        {% if tx.flow_direction == 'receive' %}
-                                            &#8592; <!-- ← to receive -->
-                                        {% else %}
-                                            &#8594; <!-- → to send -->
-                                        {% endif %}
-                                    </div>
-
-                                    <!-- Balance info -->
-                                    <div class="tx-info">
-                                        <div class="tx-amount">
-                                            {{ format_amount(tx.flow_amount) }}
-                                        </div>
-                                        <div class="tx-balance">
-                                            {{ format_amount(tx.new_balance) }}
-                                        </div>
-                                    </div>
-
-                                    <!-- More info ? -->
-                                    <div class="tx-id">
-                                        {{ tx.tx_id[:10] }}… 
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                    {% endif %}
-                </section>
-
-            {% endif %}
-
-
-
-
 
 </html>
 

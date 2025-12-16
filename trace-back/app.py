@@ -1,29 +1,8 @@
-import requests
-import sqlite3
-from flask import Flask, redirect, render_template, request, jsonify, send_from_directory
-
-
-from helpers import format_amount, get_address_info, get_tx_history, apology, login_required, lookup, usd
+from flask import Flask, request, jsonify
+from helpers import get_address_info, get_tx_history
 
 # Configure application
 app = Flask(__name__, static_folder="static", static_url_path="")
-app.jinja_env.globals.update(format_amount=format_amount)
-
-ADDRESS = "bc1pmzlcd8sce4e7lvwr6thh6qwcvvmp0v5wg5n69p3ajndmqe8rvdlqc6skjq"
-ADDRESS2 = "16w7QP8hq8AXrTJ5QUyoJEQxZLonzEj1pT"
-
-# Connect to DB
-#connection = sqlite3.connect("transactions.db")
-# db = connection.cursor()
-
-
-@app.after_request
-def after_request(response):
-    """Ensure responses aren't cached"""
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
 
 # --------------------------------------------------------------------------------------------------
 # HOME route
@@ -50,6 +29,8 @@ def load_initial_txs(address):
     error = None
     tx_history = None
     last_tx_id = None
+    last_tx_nb = None
+    old_balance = None
  
     # Check address and get results (or return the error message)
     try:
@@ -66,12 +47,14 @@ def load_initial_txs(address):
             tx_history = get_tx_history(
                 address=address,
                 last_tx_id=None,
-                tx_count=tx_count, 
+                tx_nb=tx_count, 
                 balance=total_balance
             )
 
-            # Get last Transaction id
+            # Get last Transaction id and nb and oldest balance
             last_tx_id = tx_history[-1]["tx_id"]
+            last_tx_nb = tx_history[-1]["tx_nb"]
+            old_balance = tx_history[-1]["old_balance"]
         
         except KeyError as e:
             error=(f"Missing transaction id in JSON: {e})")
@@ -85,6 +68,8 @@ def load_initial_txs(address):
         "address_info": address_info,
         "tx_history": tx_history,
         "last_tx_id": last_tx_id,
+        "last_tx_nb": last_tx_nb,
+        "old_balance": old_balance,
         "error": error
     })
 
@@ -101,16 +86,18 @@ def load_next_txs(address):
     
     # Get arguments
     last_tx_id = request.args.get("last_tx_id")    
-    last_tx_count = int(request.args.get("last_tx_count"))
-    last_balance = int(request.args.get("last_balance"))
+    last_tx_nb = int(request.args.get("last_tx_nb"))
+    old_balance = int(request.args.get("old_balance"))
+
+    error = None
 
     try:
         # Get history and initialize transaction count to the oldest transaction already fetched minus 1
         tx_history = get_tx_history(
             address=address,
             last_tx_id=last_tx_id,
-            tx_count=last_tx_count - 1,
-            balance=last_balance
+            tx_nb=last_tx_nb - 1,
+            balance=old_balance
         )
     
     except ValueError as e:

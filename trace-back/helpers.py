@@ -1,20 +1,9 @@
 import requests
-
-from flask import redirect, render_template, session
-from functools import wraps
 from datetime import datetime
 
 API_BASE_URL = "https://blockstream.info/api"
-POOL = "mempool"
-CONFIRMED = "confirmed"
-
-# --------------------------------------------------------------------------------------------------
-# Convert Nb to BTC and sats
-# --------------------------------------------------------------------------------------------------
-def format_amount(amount):
-    """Format value as satoshis and BTC."""
-    amount_btc = amount / 100_000_000
-    return f"{amount:,} sats ({amount_btc:,.8f} BTC)"
+POOL = "Mempool"
+CONFIRMED = "Confirmed"
 
 # --------------------------------------------------------------------------------------------------
 # Get address information (Balance and number of transactions)
@@ -60,7 +49,7 @@ def get_address_info(address):
 # --------------------------------------------------------------------------------------------------
 # Get address confirmed transaction history and update balance decrementally
 # --------------------------------------------------------------------------------------------------
-def get_tx_history(address, last_tx_id, tx_count, balance):
+def get_tx_history(address, last_tx_id, tx_nb, balance):
     
     # Set suffix to call the proper api url in case the function is called after scrolling
     url_suffix = f"/chain/{last_tx_id}" if last_tx_id is not None else "" 
@@ -117,9 +106,9 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
 
             # Build the resulting dictionary for the current transaction
             tx_info = {
-                "tx_nb": tx_count,
+                "tx_nb": tx_nb,
                 "tx_id": tx_id,
-                "block_confirmed": block_info["confirmed"],
+                "tx_status": tx_status,
                 "flow_direction": flow_direction,
                 "flow_amount": flow_amount,
                 "old_balance": old_balance,
@@ -134,7 +123,7 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
             tx_history.append(tx_info)
 
             # Decrement transaction number and update balance to the previous one
-            tx_count -= 1
+            tx_nb -= 1
             balance = old_balance
             
             
@@ -142,55 +131,9 @@ def get_tx_history(address, last_tx_id, tx_count, balance):
     except requests.RequestException as e:
         raise ValueError(f"Transaction history API - Request Error: {e}")
     except KeyError as e:
-        raise ValueError(f"Missing expected field in JSON: {e} ({tx_status} transaction {tx_count})")
+        raise ValueError(f"Missing expected field in JSON: {e} ({tx_status} transaction {tx_nb})")
     except ValueError as e:
         raise ValueError(f"API - Transaction history - JSON parsing error: {e}")
     
     # Return result with the transaction history
     return tx_history
-
-
-# --------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------
-# --------------------------------------------------------------------------------------------------
-
-
-def apology(message, code=400):
-    """Render message as an apology to user."""
-
-    def escape(s):
-        """
-        Escape special characters.
-
-        https://github.com/jacebrowning/memegen#special-characters
-        """
-        for old, new in [
-            ("-", "--"),
-            (" ", "-"),
-            ("_", "__"),
-            ("?", "~q"),
-            ("%", "~p"),
-            ("#", "~h"),
-            ("/", "~s"),
-            ('"', "''"),
-        ]:
-            s = s.replace(old, new)
-        return s
-
-    return render_template("apology.html", top=code, bottom=escape(message)), code
-
-
-def login_required(f):
-    """
-    Decorate routes to require login.
-
-    https://flask.palletsprojects.com/en/latest/patterns/viewdecorators/
-    """
-
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if session.get("user_id") is None:
-            return redirect("/login")
-        return f(*args, **kwargs)
-
-    return decorated_function
