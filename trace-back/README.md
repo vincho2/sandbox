@@ -1,8 +1,8 @@
 # BITCOIN ADDRESS TRANSACTION HISTORY
 #### Video Demo:  <URL HERE>
-#### Description:
+## Description:
 
-##### Context and purpose:
+### Context and purpose:
 
 This project aims at creating a very simple web application which allows to get a synthethic view of the activity of a given Bitcoin public address.
 As you may know, Bitcoin blockchain is plublic and all the transactions are can be extracted. 
@@ -12,7 +12,7 @@ However, the list of transaction is not easy to read and provides many details t
 Blockstream proposes also an API to retrieve this information and build its own view based on extracted data.
 The idea of this project is to call this API and to return information in a basic and synthetic way.
 
-##### Application description:
+### Application description:
 
 The application is a single page application which is loaded only once at the beginning.
 The input form is in the navigation bar and expect a public Bitcoin address as input.
@@ -30,10 +30,10 @@ Each transaction is shown with the following attributes :
 - Amount
 - Old and new balance (in satoshis and BTC)
 
-##### Project architecture:
+### Project architecture:
 
 
-###### Back-end :
+#### Back-end :
 
 
 The back-end is written in Python and uses Flask as learnt during the CS50 class.
@@ -45,10 +45,10 @@ There are 2 python files:
 app.py contains the http routes.
 There are actually 3 routes in the application.
 
-####### Route1: Index :
+##### Route1: Index :
 This is the home route and it cannot be simpler. It just calls index.html file, nothing more
 
-####### Route2: Load initial transactions:
+##### Route2: Load initial transactions:
 This route is called using the GET method after the BTC address has been submitted from the unique index page form.
 It is called with the address as unique argument.
 If the address is valid, the route function calls another function, located in helpers.py which calls a first API which returns a json file containing the main address information.
@@ -57,7 +57,7 @@ In case of success, another function, also located in helpers.py calls a second 
 The python function itself returns a list of dictionary (1 dictionary per transaction)
 Both objects (address information dictionary and transaction history list) are "jsonified" and returned by the route function.
 
-####### Route3: Load next transactions:
+##### Route3: Load next transactions:
 The second important route is called after the user scrolls down the page result in order to get the next most recent transactions from the list.
 As we will see later, this route is only called in case the input address counts more than 25 transactions in its history.
 This route takes more arguments in addition to the BTC address.
@@ -81,7 +81,7 @@ The api called on retrieve batches of 25 transactions.
 As argument it takes the address id and the id of the last transaction called before (so that the API starts extracting the transactions just earlier to this last one).
 the API response is stored as a list of dictionary using a for loop.
 
-####### Back-end design considerations:
+##### Back-end design considerations:
 
 Initially, my design was based on several templates and I was using Jinja to manage the html display logic.
 But as I was building the project, I was learning more and more about javascript and I finally ended up with a single page application design where there was no need for several templates and I could manage the dynamic display fully in JS in the front-end. 
@@ -91,7 +91,7 @@ Finally, I found out that the storage of information on server side was not usef
 I am also using DB and SQL already a lot in my professional life, so I consider that I don't really need to practice this part that much and preferred to dedicate my time more on learning new things like javascript features.
 
 
-###### Front-end :
+#### Front-end :
 
 The front-end items are located under the static folder with:
 - index.html
@@ -112,7 +112,7 @@ The different routes are called by javascript without reloading of the main page
 As I am completely new to this, I spent a lot of time finding the best architecture for the application itself and for the project folder structure as my main.js was getting bigger and bigger.
 For this aspect of the project, I relied a lot on advices from chatGpt.
 
-####### index.html:
+##### index.html:
 This is the single page where everything is displayed.
 It consists of a navigation bar with just a logo and an input form for the address and obviously a submit button.
 Whenever, a search is launched, the address information results are displayed inside the navigation bar below the form.
@@ -124,18 +124,18 @@ The body of the page includes the navigation bar and a "main" element that conta
 The main blocks to display such as the address information or the transaction history list are based on html templates which are grouped in the this index.html file.
 the javascript sript uses them to populate the data properly on the page.
 
-####### style.css:
+##### style.css:
 This file is quite light and only contains aesthetic feature that were easier to define here than finding them directly via bootstrap.
 Most of the css features comes from bootstrap classes. 
 
-####### javascript:
+##### javascript:
 
 main.js: This is the main script referenced in the index.html.
 It is very simple and just listens to the form submit.
 
 
 
-###### What I have learnt:
+#### What I have learnt:
 - API + doc
 - Infinite scroll
 - JS
