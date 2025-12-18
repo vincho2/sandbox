@@ -1,0 +1,44 @@
+#page-end {
+    height: 1px;
+}
+
+.address-id {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+}
+
+.address-id-value {
+    color: #ea433b;
+}
+
+.address-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.address-item {
+    display: flex;
+    gap: 6px;
+}
+
+.label {
+    color: #555;
+}
+
+.value {
+    font-weight: bold;
+}
+
+.tx-card {
+    background-color: #f8f9fa;
+    transition: transform 0.15s;
+    position: relative;
+}
+
+.tx-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
